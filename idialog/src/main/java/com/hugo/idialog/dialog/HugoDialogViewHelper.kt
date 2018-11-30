@@ -138,7 +138,7 @@ class HugoDialogViewHelper(view : View) {
     /**
      * 设置控件是否显示  不可见占位
      */
-    fun setVisibleOrInVisible (@IdRes id: Int,isVisible: Boolean){
+    fun setVisibleOrInvisible (@IdRes id: Int,isVisible: Boolean){
         val view = getView<View>(id)
         view.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
     }
@@ -167,6 +167,8 @@ class HugoDialogViewHelper(view : View) {
      * 传入已经实现图片框架的图片加载类
      */
     fun setImagePath(@IdRes id: Int,commonImageLoader: CommonImageLoader){
+        //将第三方加载图片框架与之分离（解耦）——————这里主要参考红橙Darren的博客
+        //https://www.jianshu.com/p/2c5a99984919
         val view = getView<View>(id)
         if (view is ImageView){
             commonImageLoader.loadImageView(view,commonImageLoader.getImagePath())
