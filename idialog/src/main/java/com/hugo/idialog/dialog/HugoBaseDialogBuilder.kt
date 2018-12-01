@@ -95,6 +95,31 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
     var mAnimation = R.style.default_dialog_anim
 
     /**
+     * 判断mOnDismissListener是否初始化
+     */
+    fun isOnDismissListenerInit():Boolean{
+        return ::mOnDismissListener.isInitialized
+    }
+    /**
+     * 判断mOnCancelListener是否初始化
+     */
+    fun isOnCancelListenerInit():Boolean{
+        return ::mOnCancelListener.isInitialized
+    }
+    /**
+     * 判断mOnKeyListener是否初始化
+     */
+    fun isOnKeyListenerInit():Boolean{
+        return ::mOnKeyListener.isInitialized
+    }
+    /**
+     * 判断ContentVIew是否初始化
+     */
+    fun isContentViewInit():Boolean{
+        return ::mContentView.isInitialized
+    }
+
+    /**
      * 设置dialog宽度全屏
      */
     fun  setFullWidth() :BUILDER{

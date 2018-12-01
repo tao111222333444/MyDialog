@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--dialog底部弹出动画-->
+    <style name="dialog_from_bottom_anim">
+        <item name="android:windowEnterAnimation">@anim/dialog_from_bottom_anim_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_from_bottom_anim_out</item>
+    </style>
+
+    <!--dialog默认动画-->
+    <style name="default_dialog_anim">
+        <item name="android:windowEnterAnimation">@anim/default_dialog_anim_in</item>
+        <item name="android:windowExitAnimation">@anim/default_dialog_anim_out</item>
+    </style>
+</resources>
