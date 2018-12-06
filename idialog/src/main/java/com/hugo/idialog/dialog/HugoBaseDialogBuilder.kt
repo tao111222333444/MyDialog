@@ -5,14 +5,13 @@ import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.support.annotation.AnimRes
-import android.support.annotation.ColorRes
-import android.support.annotation.IdRes
+import android.support.annotation.*
 import android.util.SparseArray
 import android.util.SparseIntArray
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.hugo.idialog.R
 import com.hugo.idialog.image.CommonImageLoader
 import com.hugo.idialog.interfaces.HugoDialogClickListener
@@ -23,7 +22,7 @@ import com.hugo.idialog.interfaces.HugoDialogClickListener
  * 版本：v1.0
  * 描述：
  */
-class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
+open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
 
         var mContext: Context,
         /**
@@ -35,6 +34,8 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
 
     lateinit var mDialog :HugoDialog
 
+    lateinit var mDialogViewHelper:HugoDialogViewHelper
+
     /**
      * 点击返回键时候dismiss
      */
@@ -43,8 +44,10 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
      * 设置点击dialog以外的区域是否消失dialog
      */
     var mCancelableOutside = true
-
-
+    /**
+     * 是否弹出软键盘
+     */
+    var isShowSoftInput = false
     /**
      * dialog监听事件
      */
@@ -81,6 +84,10 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
      * dialog宽度占屏幕宽度的比例
      */
     var mWidthOffset = 0.9
+    /**
+     * dialog最高高度占屏幕的比例  默认三分之二
+     */
+    var mHeightOffset = 2f/3
     /**
      * dialog 弹窗
      */
@@ -136,6 +143,14 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
     }
 
     /**
+     * 设置dialog最高高度占屏幕的比例
+     */
+    fun setHeightOffset(heightOffset:Float):BUILDER{
+        mHeightOffset = heightOffset
+        return builder()
+    }
+
+    /**
      * 设置dialog高度
      */
     fun setHeight(height : Int):BUILDER {
@@ -155,8 +170,13 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
     /**
      * 设置其他dialog动画
      */
-    fun setAnimation(@AnimRes animation : Int):BUILDER{
+    fun setAnimation(@StyleRes animation : Int):BUILDER{
         mAnimation = animation
+        return builder()
+    }
+
+    fun isShowSoftInput(isShow:Boolean):BUILDER{
+        isShowSoftInput = isShow
         return builder()
     }
 
@@ -197,6 +217,11 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
      */
     fun setCancelableOutside(isCancelableOutside:Boolean):BUILDER{
         mCancelableOutside = isCancelableOutside
+        return builder()
+    }
+
+    fun setText(@IdRes id : Int,@StringRes stringId:Int):BUILDER{
+            setText(id, mContext.getString(stringId))
         return builder()
     }
 
@@ -242,11 +267,84 @@ class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
         return this as BUILDER
     }
 
+
+
+    /**
+     * 获取对应id View
+     */
+    fun <VIEW : View> getView(@IdRes viewId:Int): VIEW? {
+        if (::mDialogViewHelper.isInitialized){
+            return mDialogViewHelper.getView(viewId)
+        }
+        return null
+    }
+
+    /**
+     * 创建dialog
+     */
     fun create():HugoDialog {
         if (!::mDialog.isInitialized){
             mDialog = HugoDialog(mContext,mThemeResId)
+            if (isShowSoftInput) {
+                mDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+                }
             mDialog.attach(this)
+            mDialogViewHelper = mDialog.getDialogViewHelper()
+            attachView()
         }
         return mDialog
+    }
+
+    /**
+     * 显示弹窗
+     */
+    fun show():HugoDialog{
+        if(::mDialog.isInitialized){
+            mDialog.show()
+        }else{
+            create().show()
+        }
+        return mDialog
+    }
+
+    fun attachView():Boolean{
+        /**
+         * 设置文案 和 颜色
+         * */
+        for (i in 0 until  mTextArray.size()){
+            mDialogViewHelper.setText(mTextArray.keyAt(i),mTextArray.valueAt(i))
+        }
+
+        repeat(mTextColorArray.size()){
+            mDialogViewHelper.setTextColor(mTextColorArray.keyAt(it),mTextColorArray.valueAt(it))
+        }
+
+        repeat(mTextColorStateListArray.size()){
+            mDialogViewHelper.setTextColor(mTextColorStateListArray.keyAt(it),mTextColorStateListArray.valueAt(it))
+        }
+
+        /**
+         * 点击事件
+         * */
+        repeat(mClickListenerArray.size()){
+            mDialogViewHelper.setOnDialogClickListener(mClickListenerArray.keyAt(it),mClickListenerArray.valueAt(it))
+        }
+
+        /**
+         * 图片
+         */
+        repeat(mImageBitmapArray.size()){
+            mDialogViewHelper.setImageBitmap(mImageBitmapArray.keyAt(it),mImageBitmapArray.valueAt(it))
+        }
+
+        repeat(mImageDrawableArray.size()){
+            mDialogViewHelper.setImageDrawable(mImageDrawableArray.keyAt(it),mImageDrawableArray.valueAt(it))
+        }
+
+        for (i in 0 until mImageCommonImageLoaderArray.size()){
+            mDialogViewHelper.setImagePath(mImageCommonImageLoaderArray.keyAt(i),mImageCommonImageLoaderArray.valueAt(i))
+        }
+
+        return true
     }
 }
