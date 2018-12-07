@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainFragment">
+
+    <FrameLayout
+        android:id="@+id/fl_content1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></FrameLayout>
+
+    <Button
+        android:id="@+id/dialog1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="弹窗一"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/dialog2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="弹窗二"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog1" />
+    <Button
+        android:id="@+id/dialog3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="弹窗三"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog2" />
+    <Button
+        android:id="@+id/dialog4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="弹窗四"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog3" />
+</android.support.constraint.ConstraintLayout>
