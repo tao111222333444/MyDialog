@@ -42,7 +42,7 @@ class HugoDialogViewHelper(view : View) {
      * 获取对应id的控件
      */
     fun < T:View > getView( @IdRes idRes:Int): T {
-        var  viewWeakReference = mViews.get(idRes)
+        val viewWeakReference = mViews.get(idRes)
         var view: View ? = null
         if(null != viewWeakReference){
             view = viewWeakReference.get()

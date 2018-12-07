@@ -263,6 +263,16 @@ open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
         return builder()
     }
 
+    fun setVisibleOrGone(@IdRes viewId: Int,isVisible :Boolean):BUILDER{
+        mDialogViewHelper.setVisibleOrGone(viewId,isVisible)
+        return builder()
+    }
+
+    fun setVisibleOrInvisible(@IdRes viewId: Int,isVisible: Boolean):BUILDER{
+        mDialogViewHelper.setVisibleOrInvisible(viewId,isVisible)
+        return builder()
+    }
+
     private fun builder():BUILDER  {
         return this as BUILDER
     }
@@ -307,7 +317,10 @@ open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
         return mDialog
     }
 
-    fun attachView():Boolean{
+    /**
+     * 初始化控件
+     */
+    open fun attachView():Boolean{
         /**
          * 设置文案 和 颜色
          * */

@@ -1,16 +1,16 @@
 package com.hugo.idialog.dialog
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.annotation.*
-import android.support.v4.view.LayoutInflaterCompat
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import com.hugo.idialog.R
 import com.hugo.idialog.image.CommonImageLoader
 import com.hugo.idialog.interfaces.HugoDialogClickListener
@@ -245,5 +245,168 @@ class HugoDialog(context: Context, @StyleRes themeResIdRes: Int) : Dialog(contex
     /**
      * 项目统一风格dialog构造类
      */
-//    class
+    class HugoCommonBuilder(context: Context,themeResIdRes: Int):HugoBaseDialogBuilder<HugoCommonBuilder>(context,themeResIdRes){
+        constructor(context: Context):this(context,R.style.dialog)
+
+        init {
+            mContentView = LayoutInflater.from(mContext).inflate(R.layout.dialog_common,null)
+        }
+
+        /**
+         * 内容块的布局
+         */
+        private lateinit var view:View
+        /**
+         * 是否设置了 Merge 标签布局
+         */
+        private var isMergeLayout = false
+
+        /**
+         * 判断是否设置 取消按钮
+         */
+        private var isSetCancel = false
+        /**
+         * 判断是否设置 确认按钮
+         */
+        private var isSetConfirm=false
+
+        /**
+         *  设置内容块的布局
+         */
+        fun setConentLayout(view: View):HugoCommonBuilder{
+            this.view = view
+            return this
+        }
+        /**
+         *  设置内容块的布局的  @LayoutRes
+         */
+        fun setConentLayout(@LayoutRes resId:Int):HugoCommonBuilder{
+            if (resId != 0 ){
+                setConentLayout(LayoutInflater.from(mContext).inflate(resId,null))
+            }
+            return this
+        }
+
+        fun setMergeConentLayout(@LayoutRes resId:Int):HugoCommonBuilder {
+            if (resId != 0 ){
+                LayoutInflater.from(mContext).inflate(resId,getView<FrameLayout>(R.id.fl_content),true)
+                isMergeLayout = true
+            }
+            return this
+        }
+
+        /**
+         * 设置dialog标题
+         */
+        fun setTitle(charSequence: CharSequence):HugoCommonBuilder{
+            mTextArray.put(R.id.tv_dialog_common_title,charSequence)
+            return this
+        }
+
+
+        /**
+         * 设置取消事件和取消按钮文案
+         */
+        fun setNegativeContentAndListener(charSequence: CharSequence,onClickListener: HugoDialogClickListener):HugoCommonBuilder{
+            mTextArray.put(R.id.tv_dialog_common_cancel,charSequence)
+            mClickListenerArray.put(R.id.tv_dialog_common_cancel,onClickListener)
+            isSetCancel = true
+            return this
+        }
+
+        /**
+         * 设置取消按钮文案  默认事件为关闭dialog
+         */
+        fun setNegativeContent(charSequence: CharSequence):HugoCommonBuilder{
+            setNegativeContentAndListener(charSequence, object : HugoDialogClickListener {
+                override fun onDialogClick(view: View): Boolean {
+                    return true
+                }
+            })
+            return this
+        }
+
+
+        /**
+         * 设置确认按钮文案和点击事件
+         */
+        fun setPositiveContentAndListener(charSequence: CharSequence,onClickListener: HugoDialogClickListener):HugoCommonBuilder{
+            mTextArray.put(R.id.tv_dialog_common_confirm,charSequence)
+            mClickListenerArray.put(R.id.tv_dialog_common_confirm,onClickListener)
+            isSetConfirm = true
+            return this
+        }
+
+        /**
+         * 设置取消按钮字体颜色
+         */
+        fun setNegativeTextColor(@ColorInt color: Int):HugoCommonBuilder{
+            mTextColorArray.put(R.id.tv_dialog_common_cancel,color)
+            return this
+        }
+
+        /**
+         * 设置取消按钮字体颜色
+         */
+        fun setNegativeTextColor(color:ColorStateList):HugoCommonBuilder{
+            mTextColorStateListArray.put(R.id.tv_dialog_common_cancel,color)
+            return this
+        }
+
+        /**
+         * 设置确认键文案颜色
+         */
+        fun setPositiveTextColor(@ColorInt color: Int):HugoCommonBuilder{
+            mTextColorArray.put(R.id.tv_dialog_common_confirm,color)
+            return this
+        }
+
+        /**
+         * 设置确认按钮颜色
+         */
+        fun setPositiveTextColor(color:ColorStateList):HugoCommonBuilder{
+            mTextColorStateListArray.put(R.id.tv_dialog_common_confirm,color)
+            return this
+        }
+
+
+        /**
+         * 初始控件
+         */
+        override fun attachView():Boolean{
+            //如果有赋值就添加进  容器
+            if (::view.isInitialized ){
+                getView<FrameLayout>(R.id.fl_content)?.addView(view)
+            }else if (!isMergeLayout){
+                //如果没有赋值也没有设置  merge布局就设置默认布局
+                setMergeConentLayout(R.layout.dialog_commom_default_content)
+            }
+
+            if (!isSetCancel && !isSetConfirm){
+                //如果都没有设置  默认一个取消按钮
+                setPositiveContentAndListener(mContext.getString(R.string.dialog_default_confirm), object : HugoDialogClickListener {
+                    override fun onDialogClick(view: View): Boolean {
+                        return true
+                    }
+                })
+                getView<View>(R.id.tv_dialog_common_confirm)?.setBackgroundResource(R.drawable.dialog_center_btn_bg)
+                setVisibleOrGone(R.id.tv_dialog_common_cancel,false)
+                setVisibleOrGone(R.id.dialog_line_3,false)
+            }else if (isSetCancel&& !isSetConfirm){
+                //如果只设置了取消按钮  就把确定按钮隐藏
+                getView<View>(R.id.tv_dialog_common_cancel)?.setBackgroundResource(R.drawable.dialog_center_btn_bg)
+                setVisibleOrGone(R.id.tv_dialog_common_confirm,false)
+                setVisibleOrGone(R.id.dialog_line_3,false)
+            }else if (isSetConfirm && !isSetCancel){
+                //如果只设置了确定按钮  就把取消按钮隐藏
+                getView<View>(R.id.tv_dialog_common_confirm)?.setBackgroundResource(R.drawable.dialog_center_btn_bg)
+                setVisibleOrGone(R.id.tv_dialog_common_cancel,false)
+                setVisibleOrGone(R.id.dialog_line_3,false)
+            }
+
+
+            return super.attachView()
+        }
+
+    }
 }
