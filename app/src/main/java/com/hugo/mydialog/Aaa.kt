@@ -1,9 +1,4 @@
-package com.hugo.idialog
-
-import android.util.SparseArray
-import android.widget.ImageView
-import android.widget.TextView
-import com.hugo.idialog.image.CommonImageLoader
+package com.hugo.mydialog
 
 /**
  * @author  作者：hugo
@@ -13,7 +8,7 @@ import com.hugo.idialog.image.CommonImageLoader
  */
 
 class Aaa{
-    lateinit var test:Bbb
+    lateinit var test: Bbb
 
     fun isTestInit():Boolean{
 
