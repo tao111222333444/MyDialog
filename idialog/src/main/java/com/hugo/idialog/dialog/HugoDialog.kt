@@ -10,7 +10,11 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageView
 import com.hugo.idialog.R
 import com.hugo.idialog.image.CommonImageLoader
 import com.hugo.idialog.interfaces.HugoDialogClickListener
@@ -115,7 +119,12 @@ class HugoDialog(context: Context, @StyleRes themeResIdRes: Int) : Dialog(contex
             window?.setWindowAnimations(baseBuilder.mAnimation)
         }
         val lp = window?.attributes
-        lp?.width = (baseBuilder.mContext.resources.displayMetrics.widthPixels * baseBuilder.mWidthOffset).toInt()
+        if (baseBuilder.mWidth == 0) {
+            //如果宽度为-1  就设置为默认的
+            lp?.width = (baseBuilder.mContext.resources.displayMetrics.widthPixels * baseBuilder.mWidthOffset).toInt()
+        }else {
+            lp?.width = baseBuilder.mWidth
+        }
         val maxHeight = (baseBuilder.mContext.resources.displayMetrics.heightPixels * baseBuilder.mHeightOffset).toInt()
         //如果超过了比例高度则就按比例高度来设置
         lp?.height = if(baseBuilder.mHeight > maxHeight) maxHeight else baseBuilder.mHeight
@@ -408,5 +417,62 @@ class HugoDialog(context: Context, @StyleRes themeResIdRes: Int) : Dialog(contex
             return super.attachView()
         }
 
+    }
+
+    /**
+     * 载入缓冲dialog
+     */
+    class HugoLoadingBuilder(context: Context,themeResIdRes: Int):HugoBaseDialogBuilder<HugoLoadingBuilder>(context,themeResIdRes){
+        constructor(context: Context):this(context,R.style.dialog)
+
+        init {
+            mContentView= LayoutInflater.from(mContext).inflate(R.layout.dialog_loading,null)
+            //设置为自适应宽度
+            setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)
+            mAnimation = 0
+        }
+
+        var mImageAnimation = AnimationUtils.loadAnimation(mContext,R.anim.dialog_imageview_animation)
+
+        /**
+         * 设置文案
+         */
+        fun setHint(@StringRes int: Int):HugoLoadingBuilder{
+            return setHint(mContext.getString(int))
+        }
+        /**
+         * 设置文案
+         */
+        fun setHint(charSequence: CharSequence):HugoLoadingBuilder{
+            setText(R.id.tv_dialog_loading_hint,charSequence)
+            return this
+        }
+
+        /**
+         * 设置文案颜色
+         */
+        fun setHintColor(@ColorRes int: Int):HugoLoadingBuilder{
+            setTextColor(R.id.tv_dialog_loading_hint,int)
+            return this
+        }
+
+
+        fun setLoadingImageAnimation(imageAnimation: Animation):HugoLoadingBuilder{
+            mImageAnimation = imageAnimation
+            return this
+        }
+
+        override fun show():HugoDialog{
+           val dialog = super.show()
+            //在代码里设置插值器 开始动画
+//            mImageAnimation.interpolator = LinearInterpolator()
+            getView<ImageView>(R.id.iv_dialog_loading)?.startAnimation(mImageAnimation)
+            return dialog
+        }
+
+        override fun attachView(): Boolean {
+            getView<ImageView>(R.id.iv_dialog_loading)?.animation = mImageAnimation
+            return super.attachView()
+        }
     }
 }

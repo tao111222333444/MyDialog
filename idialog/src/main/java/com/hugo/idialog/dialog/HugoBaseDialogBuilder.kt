@@ -85,6 +85,10 @@ open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
      */
     var mWidthOffset = 0.9
     /**
+     * dialog 弹窗
+     */
+    var mWidth = 0
+    /**
      * dialog最高高度占屏幕的比例  默认三分之二
      */
     var mHeightOffset = 2f/3
@@ -134,6 +138,13 @@ open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
         return builder()
     }
 
+    /**
+     * 设置宽度
+     */
+    fun setWidth(width:Int):BUILDER{
+        mWidth = width
+        return builder()
+    }
     /**
      * 设置dialog宽度比例
      */
@@ -308,7 +319,7 @@ open class HugoBaseDialogBuilder<BUILDER : HugoBaseDialogBuilder<BUILDER>>(
     /**
      * 显示弹窗
      */
-    fun show():HugoDialog{
+    open fun show():HugoDialog{
         if(::mDialog.isInitialized){
             mDialog.show()
         }else{

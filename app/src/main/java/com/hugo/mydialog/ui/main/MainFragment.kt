@@ -31,11 +31,7 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         dialog1?.setOnClickListener {
-//            showDialog1()
-            var ll = FrameLayout(context)
-
-            fl_content1.addView(ll)
-            ll.addView(ll)
+            showDialog1()
         }
         dialog2?.setOnClickListener{
             showDialog2()
@@ -46,7 +42,20 @@ class MainFragment : Fragment() {
         dialog4?.setOnClickListener{
             showDialog4()
         }
+        dialog5?.setOnClickListener{
+            showDialog5()}
+
+
     }
+
+    private fun showDialog5(){
+        var dialog = context?.let {
+            HugoDialog.HugoLoadingBuilder(it)
+                .setHint("缓冲中...")
+                .show()
+        }
+    }
+
     var mDialog:HugoDialog? = null
     private fun showDialog4(){
          if (mDialog == null) {
@@ -56,9 +65,9 @@ class MainFragment : Fragment() {
                          .setTitle("这是标题")
                          .setNegativeContent("取消")
                          .show()
+
              }
          }else{
-             mDialog?.setText(R.id.tv_dialog_common_content, "这是内容111")
              mDialog?.show()
          }
     }
